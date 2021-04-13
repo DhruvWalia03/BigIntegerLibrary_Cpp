@@ -54,6 +54,13 @@ class BigInteger{
         BigInteger operator *= (BigInteger b);
         BigInteger operator /= (BigInteger b);
         BigInteger operator %= (BigInteger b);
+        //Bitwise Operators
+        BigInteger operator & (BigInteger b);
+        BigInteger operator | (BigInteger b);
+        BigInteger operator ^ (BigInteger b);
+        BigInteger negation ();
+        BigInteger leftshift ();
+        BigInteger rightshift ();
         //Miscellaneous Operators
         BigInteger unaryminus(); // unary minus sign
         string toString(); // for conversion from BigInteger to string
@@ -69,7 +76,8 @@ class BigInteger{
         string subtract(string number1, string number2);
         string multiply(string n1, string n2);
         pair<string, long long> divide(string dividend, long long divisor);
-
+        string decToBin();
+        BigInteger binToDec();
 };
 
 
@@ -77,6 +85,19 @@ class BigInteger{
 int main(){
     // Write your code here to Deal with BigIntegers of Length Up to 10^(10000).
     // while printing big integer answers, always use toString() function to print.
+
+
+    /* BITWISE OPERATORS PASSED
+    string s1,s2;
+    cin >> s1 >> s2;
+    BigInteger b1 = BigInteger(s1);
+    BigInteger b2 = BigInteger(s2);
+    cout << (b1&b2).toString() << endl;
+    cout << (b1|b2).toString() << endl;
+    cout << (b1^b2).toString() << endl;
+    cout << (b1.negation()).toString() << endl;
+    cout << (b1.leftshift()).toString() << endl;
+    cout << (b2.rightshift()).toString() << endl;*/
 
     /* POSTFIX/PREFIX OPERATORS PASSED
     string s1,s2;
@@ -371,6 +392,113 @@ string BigInteger::toString() {
     return sign;
 }
 
+/*--------------------------BITWISE OPERATORS----------------------------------------------*/
+
+BigInteger BigInteger::operator&(BigInteger b) {
+    BigInteger a = (*this);
+    // Converting the Big Integer into Binary
+    string a1 = a.decToBin();
+    string b1 = b.decToBin();
+    string result="";
+    int diffInLength = abs((int)(a1.size()-b1.size()));
+
+    if(a1.size() > b1.size())
+        b1.insert(0,diffInLength,'0'); // put zeros at start of the smaller number
+    else
+        a1.insert(0,diffInLength,'0'); // put zeros at start of the smaller number
+
+    int len = a1.length();
+    for(int i = 0; i < len; i++)
+    {
+        if(a1[i]=='1' && b1[i]=='1')
+            result += '1';
+        else result += '0';
+    }
+    // Converting binary output into decimal
+    BigInteger result_dec = BigInteger(result).binToDec();
+    // Converting to Big Integer;
+    return result_dec;
+}
+
+BigInteger BigInteger::operator|(BigInteger b) {
+    BigInteger a = (*this);
+    // Converting the Big Integer into Binary
+    string a1 = a.decToBin();
+    string b1 = b.decToBin();
+    string result="";
+    int diffInLength = abs((int)(a1.size()-b1.size()));
+
+    if(a1.size() > b1.size())
+        b1.insert(0,diffInLength,'0'); // put zeros at start of the smaller number
+    else
+        a1.insert(0,diffInLength,'0'); // put zeros at start of the smaller number
+
+    int len = a1.length();
+    for(int i = 0; i < len; i++)
+    {
+        if(a1[i]=='1' || b1[i]=='1')
+            result += '1';
+        else result += '0';
+    }
+    // Converting binary output into decimal
+    BigInteger result_dec = BigInteger(result).binToDec();
+    // Converting to Big Integer;
+    return result_dec;
+}
+
+BigInteger BigInteger::operator^(BigInteger b) {
+    BigInteger a = (*this);
+    // Converting the Big Integer into Binary
+    string a1 = a.decToBin();
+    string b1 = b.decToBin();
+    string result="";
+    int diffInLength = abs((int)(a1.size()-b1.size()));
+
+    if(a1.size() > b1.size())
+        b1.insert(0,diffInLength,'0'); // put zeros at start of the smaller number
+    else
+        a1.insert(0,diffInLength,'0'); // put zeros at start of the smaller number
+
+    int len = a1.length();
+    for(int i = 0; i < len; i++)
+    {
+        if((a1[i]=='1' && b1[i]=='0') || (a1[i]=='0' && b1[i]=='1'))
+            result += '1';
+        else result += '0';
+    }
+    // Converting binary output into decimal
+    BigInteger result_dec = BigInteger(result).binToDec();
+    // Converting to Big Integer;
+    return result_dec;
+}
+
+BigInteger BigInteger::negation() {
+    BigInteger a = (*this);
+    // Converting the Big Integer into Binary
+    string a1 = a.decToBin();
+    string result="";
+    int len = a1.length();
+
+    for(int i = 0; i < len; i++)
+    {
+        if(a1[i]=='1')
+            result += '0';
+        else result += '1';
+    }
+    // Converting binary output into decimal
+    BigInteger result_dec = BigInteger(result).binToDec();
+    // Converting to Big Integer;
+    return result_dec;
+}
+
+BigInteger BigInteger::leftshift() {
+    return (*this)*2;
+}
+
+BigInteger BigInteger::rightshift() {
+    return (*this)/2;
+}
+
 /*------------------------ PRIVATE MEMBER METHODS ------------------------------------------*/
 
 bool BigInteger::equals(BigInteger b1,BigInteger b2) {
@@ -522,7 +650,7 @@ string BigInteger::multiply(string n1, string n2) {
             temp.insert(0,1,carry+'0');
 // for shifting the number to left as next digit is at tens place and so on.
         temp.append((n1.length()-i-1),'0');
-// finallu store it in the result string.
+// finally store it in the result string.
         result = add(result, temp); //O(n)
     }
     while(result[0]=='0' && result.length()>1) // erase the leading zeros
@@ -551,3 +679,32 @@ pair<string,long long> BigInteger::divide(string dividend, long long divisor) {
 
     return make_pair(quotient,remainder);
 }
+
+string BigInteger::decToBin() {
+    string result;
+    BigInteger b = *this;
+    while(b>0) {
+        result += (b % 2).toString();
+        b /= 2;
+    }
+    // reverse the string to get the binary equivalent
+    reverse(result.begin(),result.end());
+
+    return result;
+}
+
+BigInteger BigInteger::binToDec() {
+    string temp = (*this).toString();
+    int len = temp.length();
+    BigInteger b1 = BigInteger(1);
+    BigInteger result;
+
+    for(int i= len - 1; i >= 0; i--)
+    {
+        result += (BigInteger(temp[i]-'0'))*b1;
+        b1 *= 2;
+    }
+
+    return result;
+}
+
