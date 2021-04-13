@@ -48,6 +48,13 @@ class BigInteger{
         BigInteger operator *= (BigInteger b);
         BigInteger operator /= (BigInteger b);
         BigInteger operator %= (BigInteger b);
+        //Bitwise Operators
+        BigInteger operator & (BigInteger b);
+        BigInteger operator | (BigInteger b);
+        BigInteger operator ^ (BigInteger b);
+        BigInteger negation ();
+        BigInteger leftshift ();
+        BigInteger rightshift ();
         //Miscellaneous Operators
         BigInteger unaryminus(); // unary minus sign
         string toString(); // for conversion from BigInteger to string
@@ -63,6 +70,8 @@ class BigInteger{
         string subtract(string number1, string number2);
         string multiply(string n1, string n2);
         pair<string, long long> divide(string dividend, long long divisor);
+        string decToBin();
+        BigInteger binToDec();
 
 };
 
